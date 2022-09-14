@@ -102,12 +102,18 @@ class homebrew::installarm {
     logoutput => on_failure,
     timeout   => 0,
   }
+  ~> file { '/usr/local/bin/brew':
+    ensure => 'link',
+    target => "${homebrew_prefix}/bin/brew",
+    owner  => $homebrew::user,
+    group  => $homebrew::group,
+  }
   file { '/etc/paths.d/homebrew':
     owner   => 'root',
     group   => 'wheel',
     mode    => '0644',
     content => '/opt/homebrew/bin:/opt/homebrew/sbin',
-    require => Exec['install-homebrew']
+    require => Exec['install-homebrew-arm']
   }
 
 }

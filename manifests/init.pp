@@ -5,7 +5,7 @@ class homebrew (
   $github_token               = undef,
   $group                      = 'admin',
   $multiuser                  = false,
-  $arm64_install                = false,
+  $arm64_install              = false,
 ) {
 
   if $::operatingsystem != 'Darwin' {
@@ -16,16 +16,23 @@ class homebrew (
     fail('Homebrew does not support installation as the "root" user.')
   }
 
-  class { '::homebrew::compiler': }
-  -> class { '::homebrew::install': }
-
-  contain '::homebrew::compiler'
-  contain '::homebrew::install'
-
   #Install second homebrew for arm
   if $homebrew::arm64_install {
-    class { '::homebrew::installarm': }
+
+    class { '::homebrew::compiler': }
+    -> class { '::homebrew::installarm': }
+
+    contain '::homebrew::compiler'
     contain '::homebrew::installarm'
+
+  } else {
+
+    class { '::homebrew::compiler': }
+    -> class { '::homebrew::install': }
+
+    contain '::homebrew::compiler'
+    contain '::homebrew::install'
+
   }
   if $homebrew::github_token {
     file { '/etc/environment': ensure => present }
