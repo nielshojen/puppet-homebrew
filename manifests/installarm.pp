@@ -116,4 +116,8 @@ class homebrew::installarm {
     require => Exec['install-homebrew-arm']
   }
 
+  file { '/usr/local/Homebrew':
+    ensure => absent,
+    force  => true
+  }
 }

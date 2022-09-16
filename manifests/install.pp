@@ -97,4 +97,8 @@ class homebrew::install {
     group  => $homebrew::group,
   }
 
+  file { '/opt/homebrew':
+    ensure => absent,
+    force  => true
+  }
 }
