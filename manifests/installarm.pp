@@ -56,6 +56,7 @@ class homebrew::installarm {
     "${homebrew_prefix}/Homebrew",
     "${homebrew_prefix}/Caskroom",
     "${homebrew_prefix}/Cellar",
+    '/usr/local/Cellar',
     "${homebrew_prefix}/var/homebrew",
     "${homebrew_prefix}/share",
     "${homebrew_prefix}/share/doc",
@@ -103,7 +104,7 @@ class homebrew::installarm {
     timeout   => 0,
   }
   ~> file { '/usr/local/bin/brew':
-    ensure => 'link',
+    ensure => absent,
     target => "${homebrew_prefix}/bin/brew",
     owner  => $homebrew::user,
     group  => $homebrew::group,
