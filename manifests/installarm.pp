@@ -56,7 +56,6 @@ class homebrew::installarm {
     "${homebrew_prefix}/Homebrew",
     "${homebrew_prefix}/Caskroom",
     "${homebrew_prefix}/Cellar",
-    '/usr/local/Cellar',
     "${homebrew_prefix}/var/homebrew",
     "${homebrew_prefix}/share",
     "${homebrew_prefix}/share/doc",
@@ -76,6 +75,18 @@ class homebrew::installarm {
     ensure => directory,
     owner  => $homebrew::user,
     group  => $homebrew::group,
+  }
+
+  $brew_intel_folders = [
+    '/usr/local/opt',
+    '/usr/local/Homebrew',
+    '/usr/local/Caskroom',
+    '/usr/local/Cellar',
+    '/usr/local/var/homebrew',
+  ]
+
+  file { $brew_intel_folders:
+    ensure => absent,
   }
 
   if $homebrew::multiuser == true {
