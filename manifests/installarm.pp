@@ -127,9 +127,4 @@ class homebrew::installarm {
     content => '/opt/homebrew/bin:/opt/homebrew/sbin',
     require => Exec['install-homebrew-arm']
   }
-
-  file { '/usr/local/Homebrew':
-    ensure => absent,
-    force  => true
-  }
 }
