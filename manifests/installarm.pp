@@ -116,9 +116,6 @@ class homebrew::installarm {
   }
   ~> file { '/usr/local/bin/brew':
     ensure => absent,
-    target => "${homebrew_prefix}/bin/brew",
-    owner  => $homebrew::user,
-    group  => $homebrew::group,
   }
   file { '/etc/paths.d/homebrew':
     owner   => 'root',

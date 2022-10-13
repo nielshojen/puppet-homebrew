@@ -93,8 +93,8 @@ class homebrew::install {
   ~> file { '/usr/local/bin/brew':
     ensure => 'link',
     target => '/usr/local/Homebrew/bin/brew',
-    #owner  => $homebrew::user,
-    #group  => $homebrew::group,
+    owner  => $homebrew::user,
+    group  => $homebrew::group,
   }
 
   file { '/opt/homebrew':
