@@ -87,6 +87,7 @@ class homebrew::installarm {
 
   file { $brew_intel_folders:
     ensure => absent,
+    force  => true
   }
 
   if $homebrew::multiuser == true {
