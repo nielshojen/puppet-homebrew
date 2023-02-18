@@ -13,6 +13,7 @@ class homebrew::install {
     if !defined(File[$brew_sys_folder]) {
       file { $brew_sys_folder:
         ensure => directory,
+        owner  => $homebrew::owner,
         group  => $homebrew::group,
       }
     }
