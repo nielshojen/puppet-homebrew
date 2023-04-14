@@ -12,12 +12,19 @@ Puppet::Type.type(:package).provide(:homebrew, :parent => Puppet::Provider::Pack
 
   has_feature :install_options
 
-  commands :brew => '/usr/local/bin/brew'
+  if (File.exist?('/usr/local/bin/brew')) then
+    @brewbin = '/usr/local/bin/brew'
+    true
+  elsif (File.exist?('/opt/homebrew/bin/brew')) then
+    @brewbin = '/opt/homebrew/bin/brew'
+  end
+
+  commands :brew => @brewbin
   commands :stat => '/usr/bin/stat'
 
   def self.execute(cmd, failonfail = false, combine = false)
-    owner = stat('-nf', '%Uu', '/usr/local/bin/brew').to_i
-    group = stat('-nf', '%Ug', '/usr/local/bin/brew').to_i
+    owner = stat('-nf', '%Uu', "#{@brewbin}").to_i
+    group = stat('-nf', '%Ug', "#{@brewbin}").to_i
     home  = Etc.getpwuid(owner).dir
 
     if owner == 0
@@ -114,10 +121,10 @@ Puppet::Type.type(:package).provide(:homebrew, :parent => Puppet::Provider::Pack
         end
       rescue Puppet::ExecutionFailure
         Puppet.debug "Package #{install_name} not found on Brew. Trying BrewCask..."
-        execute([command(:brew), :cask, :info, install_name], :failonfail => true)
+        execute([command(:brew), :info, '--cask', install_name], :failonfail => true)
 
         Puppet.debug "Package found on brewcask, installing..."
-        output = execute([command(:brew), :cask, :install, install_name, *install_options], :failonfail => true)
+        output = execute([command(:brew), :install, '--cask', install_name, *install_options], :failonfail => true)
 
         if output =~ /sha256 checksum/
           Puppet.debug "Fixing checksum error..."
@@ -136,7 +143,7 @@ Puppet::Type.type(:package).provide(:homebrew, :parent => Puppet::Provider::Pack
       execute([command(:brew), :uninstall, resource_name], :failonfail => true)
     rescue Puppet::ExecutionFailure
       begin
-        execute([command(:brew), :cask, :uninstall, resource_name], :failonfail => true)
+        execute([command(:brew), :uninstall, '--cask', resource_name], :failonfail => true)
       rescue Puppet::ExecutionFailure => detail
         raise Puppet::Error, "Could not uninstall package: #{detail}"
       end
@@ -154,7 +161,7 @@ Puppet::Type.type(:package).provide(:homebrew, :parent => Puppet::Provider::Pack
       if resource_name = options[:justme]
         result = execute([command(:brew), :list, '--versions', resource_name])
         unless result.include? resource_name
-          result += execute([command(:brew), :cask, :list, '--versions', resource_name])
+          result += execute([command(:brew), :list, '--cask', '--versions', resource_name])
         end
         if result.empty?
           Puppet.debug "Package #{resource_name} not installed"
@@ -163,7 +170,7 @@ Puppet::Type.type(:package).provide(:homebrew, :parent => Puppet::Provider::Pack
         end
       else
         result = execute([command(:brew), :list, '--versions'])
-        result += execute([command(:brew), :cask, :list, '--versions'])
+        result += execute([command(:brew), :list, '--cask', '--versions'])
       end
       list = result.lines.map {|line| name_version_split(line)}
     rescue Puppet::ExecutionFailure => detail
