@@ -118,6 +118,11 @@ class homebrew::install {
       ensure => absent,
       force  => true
     }
+  } else {
+      file { '/usr/local/Homebrew':
+      ensure => absent,
+      force  => true
+    }
   }
 
 }
