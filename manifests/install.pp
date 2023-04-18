@@ -5,7 +5,7 @@ class homebrew::install {
       $brew_root          = '/opt/homebrew'
       $inst_dir           = $brew_root
       $link_bin           = false
-      $brew_folders_extra = []
+      $brew_folders_extra = [$inst_dir,]
     }
     /^Intel*/: {
       $brew_root          = '/usr/local'
@@ -14,12 +14,6 @@ class homebrew::install {
       $brew_folders_extra = ["${brew_root}/Homebrew",]
     }
     default:   { fail("unknown arch for processor ${::facts[processors][models][0]}") }
-  }
-
-  file { $inst_dir:
-    ensure => directory,
-    owner  => $homebrew::user,
-    group  => $homebrew::group,
   }
 
   $brew_sys_folders = [
