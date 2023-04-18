@@ -15,6 +15,13 @@ class homebrew::install {
     }
     default:   { fail("unknown arch for processor ${::facts[processors][models][0]}") }
   }
+
+  file { $inst_dir:
+    ensure => directory,
+    owner  => $homebrew::user,
+    group  => $homebrew::group,
+  }
+
   $brew_sys_folders = [
     "${brew_root}/bin",
     "${brew_root}/etc",
