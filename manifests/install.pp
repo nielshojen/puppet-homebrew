@@ -90,7 +90,7 @@ class homebrew::install {
         notify  => Exec["set-${brew_folder}-directory-inherit"]
       }
       exec { "chown-${brew_folder}":
-        command => "/usr/sbin/chown -R :${homebrew::group} ${brew_folder}'",
+        command => "/usr/sbin/chown -R ${homebrew::user}:${homebrew::group} ${brew_folder}'",
         unless  => "/usr/bin/stat -f '%Sg' '${brew_folder}' | /usr/bin/grep -w '${homebrew::group}'",
       }
       exec { "set-${brew_folder}-directory-inherit":
